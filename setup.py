@@ -9,10 +9,12 @@ OmegaConf setup
     twine upload dist/*
 """
 import os
+import sys
 import pathlib
-
 import setuptools
+from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_helpers.build_helpers import (
     ANTLRCommand,
     BuildPyCommand,

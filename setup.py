@@ -11,7 +11,6 @@ OmegaConf setup
 import os
 import pathlib
 
-import pkg_resources
 import setuptools
 
 from build_helpers.build_helpers import (
@@ -23,12 +22,19 @@ from build_helpers.build_helpers import (
     find_version,
 )
 
-with pathlib.Path("requirements/base.txt").open() as requirements_txt:
-    install_requires = [
-        str(requirement)
-        for requirement in pkg_resources.parse_requirements(requirements_txt)
-    ]
+from packaging.requirements import Requirement
 
+def _parse_requirements(path: str) -> list[str]:
+    reqs: list[str] = []
+    with pathlib.Path(path).open() as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            reqs.append(str(Requirement(line)))
+    return reqs
+
+install_requires = _parse_requirements("requirements/base.txt")
 
 def find_vendored_packages(path):
     """Add all the packages in the `vendor` directory"""
